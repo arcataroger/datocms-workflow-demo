@@ -15,7 +15,7 @@ import {
 function App() {
     registerLicense(import.meta.env.VITE_LICENSE_KEY);
     const datoClient = buildClient({apiToken: import.meta.env.VITE_OWNER_TOKEN});
-    const workflowId = 'UNbYYEdSTPyYrII6F3K6ww'
+    const workflowId = 'Kq5bp4ZFQQC-COCo13qhMQ'
     const workflowsQuery = useQuery({
         queryKey: [workflowId],
         queryFn: async () => await datoClient.workflows.find(workflowId)
@@ -92,16 +92,21 @@ function App() {
     return (
         <div className="App">
             <h1>DatoCMS Workflow Demo</h1>
-            <KanbanComponent id="kanban" keyField="stage" dataSource={featuresQuery?.data?.map((feature) => ({...feature, stage: feature.meta?.stage}))}
+            <KanbanComponent id="kanban" keyField="stage" dataSource={featuresQuery?.data?.map((feature) => ({
+                ...feature,
+                stage: feature.meta?.stage
+            }))}
                              cardSettings={{contentField: "description", headerField: "name"}}>
                 <ColumnsDirective>
-                    <ColumnDirective headerText="Backlog" keyField="backlog"/>
-                    <ColumnDirective headerText="Todo" keyField="todo"/>
-                    <ColumnDirective headerText="In Progress" keyField="in_progress"/>
-                    <ColumnDirective headerText="Approved" keyField="approved"/>
-                    <ColumnDirective headerText="Done" keyField="Close"/>
+                    {workflowsQuery?.data?.stages?.map(stage => <ColumnDirective headerText={stage.name} keyField={stage.id} />)}
                 </ColumnsDirective>
             </KanbanComponent>
+
+            <h3>Workflow</h3>
+            <pre>
+                {JSON.stringify(workflowsQuery.data, null, 2)}
+            </pre>
+            <h3>Records</h3>
             <pre>
                 {JSON.stringify(featuresQuery.data, null, 2)}
             </pre>
